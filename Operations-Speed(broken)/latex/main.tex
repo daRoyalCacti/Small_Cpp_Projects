@@ -1,0 +1,60 @@
+\documentclass[a4paper]{article}
+
+\title{Timing of mathematical operations in c++}
+\author{Me}
+\date{}
+
+\begin{document}
+  \maketitle
+
+  \section{Addition}
+  \begin{tabular}{||c|c|c|c|c||}
+    \hline
+    \textbf{Type}&\textbf{Mean}&\textbf{std.}&\textbf{Min}&\textbf{Max}\\
+    \hline
+    \input{addition.tex}
+    \hline
+  \end{tabular}
+
+
+  \section{Subtaction}
+  \begin{tabular}{||c|c|c|c|c||}
+    \hline
+    \textbf{Type}&\textbf{Mean}&\textbf{std.}&\textbf{Min}&\textbf{Max}\\
+    \hline
+    \input{subtraction.tex}
+    \hline
+  \end{tabular}
+
+
+  \section{Multiplication}
+  \begin{tabular}{||c|c|c|c|c||}
+    \hline
+    \textbf{Type}&\textbf{Mean}&\textbf{std.}&\textbf{Min}&\textbf{Max}\\
+    \hline
+    \input{multiplication.tex}
+    \hline
+  \end{tabular}
+
+
+  \section{Division}
+  \begin{tabular}{||c|c|c|c|c||}
+    \hline
+    \textbf{Type}&\textbf{Mean}&\textbf{std.}&\textbf{Min}&\textbf{Max}\\
+    \hline
+    \input{division.tex}
+    \hline
+  \end{tabular}
+
+
+  \section{Square root}
+  \begin{tabular}{||c|c|c|c|c||}
+    \hline
+    \textbf{Type}&\textbf{Mean}&\textbf{std.}&\textbf{Min}&\textbf{Max}\\
+    \hline
+    \input{sqrt.tex}
+    \hline
+  \end{tabular}
+
+
+\end{document}

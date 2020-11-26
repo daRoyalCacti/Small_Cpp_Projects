@@ -1,0 +1,8 @@
+CC = g++
+
+CFLAGS = -std=c++17 -lOpenCL
+
+EXE=Generate.exe
+
+$(EXE) : main.o
+	$(CC) -o $(EXE) main.o
