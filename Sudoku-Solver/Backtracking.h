@@ -4,11 +4,11 @@
 
 #define refactoring
 
-#define rows 9
-#define cols 9
-#define size 81
+constexpr unsigned rows = 9;
+constexpr unsigned cols = 9;
+constexpr unsigned size = 81;
 
-uint8_t board[rows][cols] = //normally hard
+double board[rows][cols] = //normally hard
 {
 	{0, 0, 0, 8, 0, 1, 0, 0, 0},
 	{0, 0, 0, 0, 0, 0, 0, 4, 3},
@@ -22,7 +22,8 @@ uint8_t board[rows][cols] = //normally hard
 };
 
 
-inline void print_board(uint8_t board[rows][cols]) { //prints the sudoku to console
+template <typename T>
+inline void print_board(T board[rows][cols]) { //prints the sudoku to console
 	for (size_t j = 0; j < cols * 4; j++) std::cout << "-"; std::cout << std::endl; //top line
 
 	for (size_t i = 0; i < rows; i++) {
@@ -42,7 +43,8 @@ inline void print_board(uint8_t board[rows][cols]) { //prints the sudoku to cons
 
 }
 
-inline bool isValid(uint8_t board[rows][cols], uint8_t posx, uint8_t posy, uint8_t hor_box, uint8_t vert_box) { //checks if the value in a given square is valid
+template <typename T, typename U>
+inline bool isValid(T board[rows][cols], U posx, U posy, T hor_box, T vert_box) { //checks if the value in a given square is valid
 	//col
 	for (size_t i = 0; i < posy; i++) { //moving down
 		if (board[posx][i] == board[posx][posy]) return false;
@@ -69,58 +71,50 @@ inline bool isValid(uint8_t board[rows][cols], uint8_t posx, uint8_t posy, uint8
 	return true;
 }
 
-
-void toSolve(uint8_t board[rows][cols], uint8_t* solveArrayx, uint8_t* solveArrayy) { //creates an array of given numbers with some extra values for error checking
-
-	//initial values to check if no solution
-	solveArrayx[0] = UINT8_MAX - 1;
-	solveArrayy[0] = UINT8_MAX - 1;
-
-	uint8_t counter = 0;
+template <typename T>
+void toSolve(T board[rows][cols], unsigned* solveArrayx, unsigned* solveArrayy) { //creates an array of given numbers with some extra values for error checking
+	
+	solveArrayx[0] = size + 11; solveArrayy[0] = size+11;	//to know when the board is not solvable
+	size_t counter = 1;
 	//creating an array of given numbers
-	for (uint8_t i = 0; i < rows; i++) {
-		for (uint8_t j = 0; j < cols; j++) {
+	for (unsigned i = 0; i < rows; i++) {
+		for (unsigned j = 0; j < cols; j++) {
 			//zero elements are what are being found
 			if (board[i][j] == 0) {
-				solveArrayx[++counter] = i; solveArrayy[counter] = j;
+				solveArrayx[counter] = i; solveArrayy[counter++] = j;
 			}
 		}
 	}
-
-	//very large values so the while loop check below will be true
-
-	for (uint8_t i = ++counter; i < rows * cols; i++) {
-		solveArrayx[i] = UINT8_MAX;
-		solveArrayy[i] = UINT8_MAX;
-	}
-
-
+	
+	//known when finished when reach value that is outside the board
+	solveArrayx[counter] = size+10; solveArrayy[counter] = size+10;
 }
 
-
-void generateBox(uint8_t* hor_box, uint8_t* vert_box) {
-	for (int i = 0; i < rows; i++) {
+template <typename T>
+void generateBox(T* hor_box, T* vert_box) {
+	for (size_t i = 0; i < rows; i++) {
 		hor_box[i] = static_cast<uint8_t>((i) / (float)rows * 3) * 3u;
 	}
 
-	for (int i = 0; i < cols; i++) {
+	for (size_t i = 0; i < cols; i++) {
 		vert_box[i] = static_cast<uint8_t>((i) / (float)cols * 3) * 3u;
 	}
 }
 
 
-void solve(uint8_t board[rows][cols]) { //solves the sudoku using backtracking
+template <typename T>
+void solve(T board[rows][cols]) { //solves the sudoku using backtracking
 
-	uint8_t solveArrayx[size + 1], solveArrayy[size + 1];
+	unsigned solveArrayx[size+1], solveArrayy[size+1];
 	toSolve(board, solveArrayx, solveArrayy);
 
-	uint8_t hor_box[rows], vert_box[cols];
+	T hor_box[rows], vert_box[cols];
 	generateBox(hor_box, vert_box);
 
-	uint8_t* ptrx = &solveArrayx[1], *ptry = &solveArrayy[1];
+	unsigned* ptrx = &solveArrayx[1], *ptry = &solveArrayy[1];
 
 
-	while (*ptry <= size + 1) {//|| *ptrx <= size + 1) {
+	while (*ptry <= cols + 1) {
 
 		if (++board[*ptrx][*ptry] == 10) {
 			board[*ptrx][*ptry] = 0;
@@ -135,16 +129,17 @@ void solve(uint8_t board[rows][cols]) { //solves the sudoku using backtracking
 
 	}
 
-	if (*ptry == UINT8_MAX - 1 || *ptrx == UINT8_MAX - 1)
+	if (*ptry == size + 11 || *ptrx == size + 11)
 		std::cerr << "no solution found" << std::endl;
 }
 
-int boardValid(uint8_t board[rows][cols]){
-	uint8_t hor_box[rows], vert_box[cols];
+template <typename T>
+int boardValid(T board[rows][cols]){
+	T hor_box[rows], vert_box[cols];
 	generateBox(hor_box, vert_box);
 
-	for (int i = 0; i < rows; i++)
-		for (int j = 0; j < cols; j++)
+	for (size_t i = 0; i < rows; i++)
+		for (size_t j = 0; j < cols; j++)
 			if (board[i][j] != 0)
 				if (!isValid(board, i, j, hor_box[i], vert_box[j]))
 					return false;
@@ -153,26 +148,3 @@ int boardValid(uint8_t board[rows][cols]){
 }
 
 
-/* //made redundent
-double mean(double* values, unsigned num) {
-	double temp = 0;
-	for (unsigned i = 0; i < num; i++) {
-		temp += values[i];
-	}
-
-
-	return temp / num;
-}
-
-
-
-double err(double* values, unsigned num) {
-	double av = mean(values, num);
-	double temp = 0;
-	for (unsigned i = 0; i < num; i++) {
-		temp += (values[i] - av) * (values[i] - av);
-	}
-
-	return sqrt(temp / ((num - 1) * num));
-}
-*/
