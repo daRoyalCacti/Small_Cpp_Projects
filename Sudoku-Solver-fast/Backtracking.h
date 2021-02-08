@@ -121,18 +121,3 @@ void solve(T board, V o_board) { //solves the sudoku using backtracking
 		std::cerr << "no solution found" << std::endl;
 }
 
-template <typename T>
-int boardValid(const T board){
-	double hor_box[rows], vert_box[cols];
-	generateBox(hor_box, vert_box);
-
-	for (size_t i = 0; i < rows; i++)
-		for (size_t j = 0; j < cols; j++)
-			if (board[i][j] != 0)
-				if (!isValid(board, i, j, hor_box[i], vert_box[j]))
-					return false;
-
-	return true;
-}
-
-

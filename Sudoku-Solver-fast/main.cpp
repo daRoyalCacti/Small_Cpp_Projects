@@ -3,28 +3,25 @@
 #include <chrono>
 #include <iostream>
 
-std::array<std::array<double, 9>, 9> output_board{};
 
-std::array<std::array<double, 9>, 9> board =
-	{
-		std::array<double,9>{0, 0, 0, 8, 0, 1, 0, 0, 0},
-		std::array<double,9>{0, 0, 0, 0, 0, 0, 0, 4, 3},
-		std::array<double,9>{5, 0, 0, 0, 0, 0, 0, 0, 0},
-		std::array<double,9>{0, 0, 0, 0, 7, 0, 8, 0, 0},
-		std::array<double,9>{0, 0, 0, 0, 0, 0, 1, 0, 0},
-		std::array<double,9>{0, 2, 0, 0, 3, 0, 0, 0, 0},
-		std::array<double,9>{6, 0, 0, 0, 0, 0, 0, 7, 5},
-		std::array<double,9>{0, 0, 3, 4, 0, 0, 0, 0, 0},
-		std::array<double,9>{0, 0, 0, 2, 0, 0, 6, 0, 0}
-	};
+
 
 int main() {
 
 	//std::cout << board_valid(board2);	
-	std::cout << point_valid<7, 3>::val << "\n";
-	std::cout << colum_valid<7,3>::val << "\n";
-	std::cout << row_valid<7,3>::val << "\n";
-	std::cout << box_valid<7,3>::val << "\n";
+
+	
+	//std::cout << board_valid::val << "\n";
+	static_assert(board_valid::val, "board is not valid");
+
+	
+	std::cout << num_check_box<0,0>::val << "\n";
+	std::cout << num_check_box<0,6>::val << "\n";
+	std::cout << num_check_box<2,4>::val << "\n";
+	std::cout << num_check_box<5,0>::val << "\n";
+	std::cout << num_check_box<5,4>::val << "\n";
+	
+
 
 
 /*
