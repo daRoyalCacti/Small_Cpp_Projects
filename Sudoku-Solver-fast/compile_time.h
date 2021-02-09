@@ -207,3 +207,11 @@ private:
 public:
 	static constexpr size_t val =  aa + ab+ ac+ ba+ bb+ bc+ ca+ cb+ cc;
 };
+
+#include <vector>
+constexpr std::array<double, 3> test_fucn() {
+	std::vector<double> ret;
+	ret.resize(3);
+
+	return {1,2,3};
+}
