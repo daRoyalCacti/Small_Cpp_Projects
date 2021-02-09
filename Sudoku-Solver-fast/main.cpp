@@ -4,25 +4,36 @@
 #include <iostream>
 
 
+template<int... Is>
+void fU(const ints<Is...>& s)
+{
+	for (auto i : { Is... }) std::cout << i << " ";
+	std::cout << "\n";
+}
+
+
+
 
 
 int main() {
 
-	//std::cout << board_valid(board2);	
-
-	
-	//std::cout << board_valid::val << "\n";
 	static_assert(board_valid::val, "board is not valid");
 
-	
-	std::cout << num_check_box<0,0>::val << "\n";
-	std::cout << num_check_box<0,6>::val << "\n";
-	std::cout << num_check_box<2,4>::val << "\n";
-	std::cout << num_check_box<5,0>::val << "\n";
-	std::cout << num_check_box<5,4>::val << "\n";
-	
+	constexpr xy test2{1,2};
+	std::cout << test2.x<< " " << test2.y << "\n";
 
+	
+	constexpr std::array<int, 5> test = make_array_n<5>(89);
+	for (const auto& a : test)
+		std::cout << a << " ";
+	std::cout << "\n";
 
+	fU(left_to_check_y<3, 2>::val);
+
+	const auto m = right_to_check_y<3, 2>::val;
+	for (const auto& i : m)
+		std::cout << i << " ";
+	std::cout << "\n";
 
 /*
 	std::cout << "Board to solve" << std::endl;

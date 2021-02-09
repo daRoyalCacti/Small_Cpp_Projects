@@ -58,14 +58,6 @@ struct return_bigger_rec<0> {
 };
 
 
-template <size_t ... I>
-constexpr std::array<int, num> want_impl(std::index_sequence<I...>) {
-	constexpr std::array<int, sizeof...(I)> a = {return_bigger_rec<I>::val...};
-	return a;
-}
-
-
-
 template <int... Is>
 constexpr auto foo(const ints<Is...> s) {
 	const std::array<int, sizeof...(Is)> temp = {return_bigger_rec<Is>::val...};

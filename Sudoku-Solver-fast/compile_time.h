@@ -140,6 +140,70 @@ struct is_fixed {
 
 
 
+
+
+
+
+
+
+
+//generating an integer sequence starting from 0 at compile time
+//https://ngathanasiou.wordpress.com/2015/02/19/compile-time-integer-sequences/
+// a sequence container -------------------------
+template<int ...>
+struct ints 
+{ 
+};
+// integer sequence -----------------------------
+template<int N, int... Is>
+struct int_seq : int_seq<N - 1, N, Is...> 
+{ 
+};
+
+template<int... Is>
+struct int_seq<0, Is...> 
+{
+	using type = ints<0, Is...>;
+};
+// convenience alias -----------------------------
+template<int N>
+using IS = typename int_seq<N>::type; 	//IS := integer sequence
+//IS<4> returns 0,1,2,3,4
+
+
+
+//generating an array full of a constant value
+//https://stackoverflow.com/questions/1065774/initialization-of-all-elements-of-an-array-to-one-default-value-in-c
+template<std::size_t size, typename T, std::size_t... indexes>
+constexpr auto make_array_n_impl(T && value, std::index_sequence<indexes...>) {
+    // Use the comma operator to expand the variadic pack
+    // Move the last element in if possible. Order of evaluation is well-defined
+    // for aggregate initialization, so there is no risk of copy-after-move
+    return std::array<std::decay_t<T>, size>{ (static_cast<void>(indexes), value)..., std::forward<T>(value) };
+}
+
+
+
+template<typename T>
+constexpr auto make_array_n(std::integral_constant<std::size_t, 0>, T &&) {
+    return std::array<std::decay_t<T>, 0>{};
+}
+
+template<std::size_t size, typename T>
+constexpr auto make_array_n(std::integral_constant<std::size_t, size>, T && value) {
+    return make_array_n_impl<size>(std::forward<T>(value), std::make_index_sequence<size - 1>{});
+}
+
+
+template<std::size_t size, typename T>
+constexpr auto make_array_n(T && value) {
+    return make_array_n(std::integral_constant<std::size_t, size>{}, std::forward<T>(value));
+}
+//make_array_n<5>(2) returns {2,2,2,2,2}
+
+
+
+
 template <size_t x, size_t y>
 struct num_check_right_t {
 	static constexpr size_t val = is_fixed<x, y>::val + num_check_right_t<x, y+1>::val;
@@ -208,10 +272,70 @@ public:
 	static constexpr size_t val =  aa + ab+ ac+ ba+ bb+ bc+ ca+ cb+ cc;
 };
 
-#include <vector>
-constexpr std::array<double, 3> test_fucn() {
-	std::vector<double> ret;
-	ret.resize(3);
 
-	return {1,2,3};
+template <size_t x, size_t y>
+struct num_check {
+	static constexpr size_t val = num_check_box<x, y>::val + num_check_col<x,y>::val + num_check_row<x,y>::val;
+};
+
+
+
+
+template <typename T>
+struct xy {
+	T x;
+	T y;
+};
+
+/*
+template <size_t x, size_t y>
+constexpr auto create_xy_row() {
+
+	const std::array<int, num_check<x,y>::val> = {
 }
+*/
+
+
+template <size_t x, size_t counter>
+struct next_fixed {
+	static constexpr size_t val = is_fixed<x, counter>::val ? counter : next_fixed<x, counter+1>::val;
+};
+
+
+template <size_t x>
+struct next_fixed<x, 9> {
+	static constexpr size_t val = -2;	//random value for debugging
+};
+
+template <size_t x, size_t y, size_t counter>
+struct next_fixed_rec {
+	static constexpr size_t val = next_fixed<x, next_fixed_rec<x, y, counter-1>::val+1>::val;
+};
+
+template <size_t x, size_t y>
+struct next_fixed_rec<x, y, 0> {
+	static constexpr size_t val = next_fixed<x, y>::val;
+};
+
+
+
+template <size_t x, size_t y, int... Is>
+constexpr auto right_to_check_y_t(const ints<Is...> s) {
+	return std::array<int, sizeof...(Is)>{next_fixed_rec<x, y, Is>::val...};
+}
+
+
+template <size_t x, size_t y>
+struct right_to_check_y {	//assumes there is numbers to the right to check
+	static constexpr auto val = right_to_check_y_t<x, y>(IS<num_check_right<x,y>::val-1>());	//val is std::array
+};
+
+
+
+template <size_t x, size_t y>
+struct left_to_check_y {	//assumes there is numbers to the left to check
+	static constexpr auto val = IS<y-1>();	//val is comma separed values (maybe??)
+};
+
+
+
