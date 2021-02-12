@@ -1,7 +1,7 @@
 #pragma once
 
 
-//could've probably use std::make_index_sequence (although it didn't work when I first tried it)
+//could've probably use std::make_index_sequence
 //
 //generating an integer sequence starting from 0 at compile time
 //https://ngathanasiou.wordpress.com/2015/02/19/compile-time-integer-sequences/
@@ -21,7 +21,6 @@ struct int_seq<0, Is...>
 {
 	using type = ints<0, Is...>;
 };
-
 // convenience alias -----------------------------
 template<int N>
 using IS = typename int_seq<N>::type; 	//IS := integer sequence

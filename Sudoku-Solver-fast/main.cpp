@@ -5,8 +5,8 @@
 
 
 
-constexpr size_t tx = 1;
-constexpr size_t ty = 5;
+constexpr size_t tx = 2;
+constexpr size_t ty = 4; 
 
 
 int main() {
@@ -14,28 +14,16 @@ int main() {
 	static_assert(board_valid::val, "board is not valid");
 
 	
-	const auto l = row_to_check_y<tx, ty>::val;
+	const auto l = to_check_y<tx, ty>::val;
 	for (const auto& i : l)
 		std::cout << i << " ";
 	std::cout << "\n";
 
-	const auto m = row_to_check_x<tx, ty>::val;
+	const auto m = to_check_x<tx, ty>::val;
 	for (const auto& i : m)
 		std::cout << i << " ";
 	std::cout << "\n\n";
 
-
-
-
-	const auto o = col_to_check_y<tx, ty>::val;
-	for (const auto& i : o)
-		std::cout << i << " ";
-	std::cout << "\n";
-
-	const auto p = col_to_check_x<tx, ty>::val;
-	for (const auto& i : p)
-		std::cout << i << " ";
-	std::cout << "\n\n";
 
 
 /*

@@ -10,19 +10,19 @@ struct is_fixed {
 	static constexpr bool val = global::board[x][y] > 0;
 };
 
-template <size_t x, size_t y>
+template <size_t x, size_t y, size_t stop>
 struct num_check_right_t {
-	static constexpr size_t val = is_fixed<x, y>::val + num_check_right_t<x, y+1>::val;
+	static constexpr size_t val = is_fixed<x, y>::val + num_check_right_t<x, y+1, stop>::val;
 };
 
-template <size_t x>
-struct num_check_right_t<x, 9> {
+template <size_t x, size_t stop>
+struct num_check_right_t<x, stop, stop> {
 	static constexpr size_t val = 0;
 };
 
 template<size_t x, size_t y>
 struct num_check_right {
-	static constexpr size_t val = num_check_right_t<x, y+1>::val;
+	static constexpr size_t val = num_check_right_t<x, y+1, 9>::val;
 };
 
 
@@ -35,19 +35,19 @@ struct num_check_row {
 
 
 
-template <size_t x, size_t y>
+template <size_t x, size_t y, size_t stop>
 struct num_check_down_t {
-	static constexpr size_t val = is_fixed<x, y>::val + num_check_down_t<x+1, y>::val;
+	static constexpr size_t val = is_fixed<x, y>::val + num_check_down_t<x+1, y, stop>::val;
 };
 
-template <size_t y>
-struct num_check_down_t<9, y> {
+template <size_t y, size_t stop>
+struct num_check_down_t<stop, y, stop> {
 	static constexpr size_t val = 0;
 };
 
 template<size_t x, size_t y>
 struct num_check_down {
-	static constexpr size_t val = num_check_down_t<x+1, y>::val;
+	static constexpr size_t val = num_check_down_t<x+1, y, 9>::val;
 };
 
 
@@ -58,6 +58,25 @@ struct num_check_col {
 
 
 
+
+/*
+template <size_t x, size_t y>
+struct num_check_col_small {
+	private:
+		static constexpr unsigned boxx = box<x>::val;
+		static constexpr unsigned boxy = box<y>::val;
+
+		//static constexpr bool a = (boxy   > y) & is_fixed<boxx , boxy  >::val;	//don't need to check
+		static constexpr bool b = (boxy+1 > y) & is_fixed<boxx , boxy+1>::val;
+		static constexpr bool c = (boxy+2 > y) & is_fixed<boxx , boxy+2>::val;
+
+	public:
+		static constexpr size_t val = b + c;
+};
+*/
+
+
+/*
 template <size_t x, size_t y>
 struct num_check_box {
 private:
@@ -83,4 +102,4 @@ template <size_t x, size_t y>
 struct num_check {
 	static constexpr size_t val = num_check_box<x, y>::val + num_check_col<x,y>::val + num_check_row<x,y>::val;
 };
-
+*/

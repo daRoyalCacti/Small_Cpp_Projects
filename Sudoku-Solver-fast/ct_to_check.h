@@ -55,11 +55,24 @@ struct left_to_check_y {	//assumes there is numbers to the left to check
 };
 
 
-
+template <size_t x, size_t y>
+constexpr auto row_to_check_y_t() {
+	if constexpr (num_check_right<x,y>::val == 0) {
+		if constexpr (y == 0) {
+			return std::array<int, 0>{};
+		} else {
+			return left_to_check_y<x,y>::val;
+		}
+	} else if constexpr (y==0) {
+		return right_to_check_y<x,y>::val;
+	} else {
+		return combine_arrays(left_to_check_y<x, y>::val, right_to_check_y<x, y>::val);
+	}
+}
 
 template <size_t x, size_t y>
 struct row_to_check_y {
-	static constexpr auto val = combine_arrays(left_to_check_y<x, y>::val, right_to_check_y<x, y>::val);
+	static constexpr auto val = row_to_check_y_t<x,y>();
 };
 
 
@@ -134,10 +147,25 @@ struct up_to_check_x {	//assumes there is numbers to the left to check
 
 
 
+template <size_t x, size_t y>
+constexpr auto col_to_check_x_t() {
+	if constexpr (num_check_down<x,y>::val == 0) {
+		if constexpr (x == 0) {
+			return std::array<int, 0>{};
+		} else {
+			return up_to_check_x<x,y>::val;
+		}
+	} else if constexpr (x==0) {
+		return down_to_check_x<x,y>::val;
+	} else {
+		return combine_arrays(up_to_check_x<x, y>::val, down_to_check_x<x, y>::val);
+	}
+}
+
 
 template <size_t x, size_t y>
 struct col_to_check_x {
-	static constexpr auto val = combine_arrays(up_to_check_x<x, y>::val, down_to_check_x<x, y>::val);
+	static constexpr auto val = col_to_check_x_t<x, y>();
 };
 
 
@@ -147,3 +175,75 @@ struct col_to_check_y {
 };
 
 
+
+
+template <size_t x, size_t y, size_t col>
+constexpr auto check_box_col_x_t() {
+	constexpr auto boxx = box<x>::val;
+	constexpr auto boxy = box<y>::val;
+
+	constexpr size_t cy = boxy + col;
+
+	if constexpr (y == cy) {
+		return std::array<int, 0>{};
+	} else 	{
+
+		constexpr size_t diff = x - boxx;
+
+		if constexpr (diff == 0) {
+
+			if constexpr (!is_fixed<boxx+1, cy>::val) {
+				if constexpr (!is_fixed<boxx+2,cy>::val) {
+					return std::array<int, 0>{};
+				} else {
+					return std::array<int, 1>{boxx+2};
+				}
+			} else {
+				if constexpr (!is_fixed<boxx+2, cy>::val) {
+					return std::array<int, 1>{boxx+1};
+				} else {
+					return std::array<int, 2>{boxx+1, boxx+2};
+				}
+			}
+
+		} else if constexpr (diff == 1) {
+			if constexpr (!is_fixed<boxx+2,cy>::val) {
+				return std::array<int, 1>{boxx};
+			} else {
+				return std::array<int, 2>{boxx, boxx+2};
+			}
+		} else {
+			return std::array<int, 2>{boxx, boxx+1};
+		}
+	}
+}
+
+
+template <size_t x, size_t y>
+struct box_to_check_x {
+	static constexpr auto val = combine_arrays(check_box_col_x_t<x, y, 0>(), check_box_col_x_t<x, y, 1>(), check_box_col_x_t<x, y, 2>());
+};
+
+
+template <size_t x, size_t y>
+struct box_to_check_y {
+private:
+	static constexpr auto boxy = box<y>::val;
+public:
+	static constexpr auto val = combine_arrays( make_array_n<check_box_col_x_t<x,y,0>().size()>(boxy)  ,  
+			make_array_n<check_box_col_x_t<x,y,1>().size()>(boxy+1)  ,  
+			make_array_n<check_box_col_x_t<x,y,2>().size()>(boxy+2) );
+};
+
+
+
+template<size_t x, size_t y>
+struct to_check_x {
+	static constexpr auto val = combine_arrays(row_to_check_x<x, y>::val, col_to_check_x<x, y>::val, box_to_check_x<x,y>::val);
+};
+
+
+template<size_t x, size_t y>
+struct to_check_y {
+	static constexpr auto val = combine_arrays(row_to_check_y<x, y>::val, col_to_check_y<x, y>::val, box_to_check_y<x,y>::val);
+};
