@@ -4,36 +4,39 @@
 #include <iostream>
 
 
-template<int... Is>
-void fU(const ints<Is...>& s)
-{
-	for (auto i : { Is... }) std::cout << i << " ";
-	std::cout << "\n";
-}
 
-
-
+constexpr size_t tx = 1;
+constexpr size_t ty = 5;
 
 
 int main() {
 
 	static_assert(board_valid::val, "board is not valid");
 
-	constexpr xy test2{1,2};
-	std::cout << test2.x<< " " << test2.y << "\n";
-
 	
-	constexpr std::array<int, 5> test = make_array_n<5>(89);
-	for (const auto& a : test)
-		std::cout << a << " ";
-	std::cout << "\n";
-
-	fU(left_to_check_y<3, 2>::val);
-
-	const auto m = right_to_check_y<3, 2>::val;
-	for (const auto& i : m)
+	const auto l = row_to_check_y<tx, ty>::val;
+	for (const auto& i : l)
 		std::cout << i << " ";
 	std::cout << "\n";
+
+	const auto m = row_to_check_x<tx, ty>::val;
+	for (const auto& i : m)
+		std::cout << i << " ";
+	std::cout << "\n\n";
+
+
+
+
+	const auto o = col_to_check_y<tx, ty>::val;
+	for (const auto& i : o)
+		std::cout << i << " ";
+	std::cout << "\n";
+
+	const auto p = col_to_check_x<tx, ty>::val;
+	for (const auto& i : p)
+		std::cout << i << " ";
+	std::cout << "\n\n";
+
 
 /*
 	std::cout << "Board to solve" << std::endl;
