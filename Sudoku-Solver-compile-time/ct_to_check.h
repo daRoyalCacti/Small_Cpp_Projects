@@ -237,6 +237,10 @@ public:
 
 
 
+
+
+
+
 template<size_t x, size_t y>
 struct to_check_x {
 	static constexpr auto val = combine_arrays(row_to_check_x<x, y>::val, col_to_check_x<x, y>::val, box_to_check_x<x,y>::val);
