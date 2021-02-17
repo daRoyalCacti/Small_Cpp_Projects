@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <array>
+#include "compile_time.h"
 
 constexpr unsigned rows = 9;
 constexpr unsigned cols = 9;

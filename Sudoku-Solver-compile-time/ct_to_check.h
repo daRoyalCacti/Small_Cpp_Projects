@@ -251,3 +251,18 @@ template<size_t x, size_t y>
 struct to_check_y {
 	static constexpr auto val = combine_arrays(row_to_check_y<x, y>::val, col_to_check_y<x, y>::val, box_to_check_y<x,y>::val);
 };
+
+
+template <size_t x, size_t y, int...Is>
+constexpr auto to_check_ptr_impl(const ints<Is...> s) {
+	constexpr auto xs = to_check_x<x,y>::val;
+	constexpr auto ys = to_check_y<x,y>::val;
+	return std::array<double*, sizeof...(Is)>{&global::output_board[xs[Is]][ys[Is]]...};
+};
+
+
+template<size_t x, size_t y>
+struct to_check_ptr {
+	static_assert(to_check_x<x,y>::val.size() == to_check_y<x,y>::val.size(), "x and y must have same number of elements");
+	static constexpr auto val = to_check_ptr_impl<x, y>(IS<to_check_x<x,y>::val.size()-1>());
+};

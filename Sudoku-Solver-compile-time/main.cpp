@@ -1,5 +1,4 @@
-//#include "Backtracking.h"
-#include "compile_time.h"
+#include "Backtracking.h"
 #include <chrono>
 #include <iostream>
 
@@ -23,6 +22,17 @@ int main() {
 	for (const auto& i : m)
 		std::cout << i << " ";
 	std::cout << "\n\n";
+
+
+	constexpr auto arr = array_sizes();
+
+	const auto b = ct_to_rt(0, 0);
+	const auto c = std::get<  std::array<double*, arr[0]>  >(b[0]);
+	std::cout << c.size() << std::endl;
+	for (const auto& i : c)
+		std::cout << *i << ' ';
+	std::cout << "\n" << num_unique(array_sizes()) << "\n\n";
+
 
 
 
