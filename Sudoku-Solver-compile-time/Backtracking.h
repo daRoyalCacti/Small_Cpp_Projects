@@ -10,15 +10,15 @@ constexpr unsigned size = 81;
 
 
 
-template <typename T>
-inline void print_board(T board) { //prints the sudoku to console
+
+inline void print_board() { //prints the sudoku to console
 	for (size_t j = 0; j < cols * 4; j++) std::cout << "-"; 
 	std::cout << '\n'; //top line
 
 	for (size_t i = 0; i < rows; i++) {
 		for (size_t j = 0; j < cols; j++) {
 			if (j % 3 == 0) std::cout << "|  "; // vertical lines
-			if (board[i][j] != 0) std::cout << static_cast<unsigned>(board[i][j]) << "  "; //the actual number
+			if (global::output_board[i][j] != 0) std::cout << static_cast<unsigned>(global::output_board[i][j]) << "  "; //the actual number
 			else std::cout << "   "; //dont't print 0's - they are unsolved squares
 		}
 		std::cout << "|\n";
@@ -32,8 +32,13 @@ inline void print_board(T board) { //prints the sudoku to console
 
 }
 
-template <typename T, typename U, typename V>
-bool isValid(const T board, const U posx, const U posy, const V hor_box, const V vert_box) { //checks if the value in a given square is valid
+template <typename U, typename V>
+bool isValid(const U posx, const U posy, const V hor_box, const V vert_box) { //checks if the value in a given square is valid
+	const auto arr = ct_to_rt(posx, posy);
+	for (size_t i = 0; i < arr.num; i++)
+		if (*arr.ptr[i] == global::output_board[posx][posy])
+			return false;
+	/*
 	//col
 	for (size_t i = 0; i < posy; i++) { //moving down
 		if (board[posx][i] == board[posx][posy]) return false;
@@ -56,12 +61,13 @@ bool isValid(const T board, const U posx, const U posy, const V hor_box, const V
 			if (i != posx && j != posy && board[i][j] == board[posx][posy]) return false;
 		}
 	}
+	*/
 
 	return true;
 }
 
-template <typename T, typename V>
-void toSolve(T board, V* solveArrayx, V* solveArrayy) { //creates an array of given numbers with some extra values for error checking
+template <typename V>
+void toSolve(V* solveArrayx, V* solveArrayy) { //creates an array of given numbers with some extra values for error checking
 	
 	solveArrayx[0] = size + 11; solveArrayy[0] = size+11;	//to know when the board is not solvable
 	size_t counter = 1;
@@ -69,7 +75,7 @@ void toSolve(T board, V* solveArrayx, V* solveArrayy) { //creates an array of gi
 	for (unsigned i = 0; i < rows; i++) {
 		for (unsigned j = 0; j < cols; j++) {
 			//zero elements are what are being found
-			if (board[i][j] == 0) {
+			if (global::board[i][j] == 0) {
 				solveArrayx[counter] = i; solveArrayy[counter++] = j;
 			}
 		}
@@ -91,11 +97,11 @@ void generateBox(T* hor_box, T* vert_box) {
 }
 
 
-template <typename T, typename V>
-void solve(T board, V o_board) { //solves the sudoku using backtracking
+
+void solve() { //solves the sudoku using backtracking
 
 	unsigned solveArrayx[size+1], solveArrayy[size+1];
-	toSolve(board, solveArrayx, solveArrayy);
+	toSolve(solveArrayx, solveArrayy);
 
 	double hor_box[rows], vert_box[cols];
 	generateBox(hor_box, vert_box);
@@ -105,13 +111,13 @@ void solve(T board, V o_board) { //solves the sudoku using backtracking
 
 	while (*ptry <= cols + 1) {
 
-		if (++board[*ptrx][*ptry] == 10) {
-			board[*ptrx][*ptry] = 0;
+		if (++global::output_board[*ptrx][*ptry] == 10) {
+			global::output_board[*ptrx][*ptry] = 0;
 			ptrx--;
 			ptry--;
 
 		}
-		else 	if (isValid(board, *ptrx, *ptry, hor_box[*ptrx], vert_box[*ptry])) {
+		else 	if (isValid(*ptrx, *ptry, hor_box[*ptrx], vert_box[*ptry])) {
 			ptrx++;
 			ptry++;
 		}

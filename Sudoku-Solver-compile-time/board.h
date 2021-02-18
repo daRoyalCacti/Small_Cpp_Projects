@@ -12,7 +12,7 @@ namespace global {
 		std::array<double,9>{0, 2, 0, 0, 3, 0, 0, 0, 0},
 		std::array<double,9>{6, 0, 0, 0, 0, 0, 0, 7, 5},
 		std::array<double,9>{0, 0, 3, 4, 0, 0, 0, 0, 0},
-		std::array<double,9>{0, 0, 0, 0, 0, 0, 6, 0, 0}
+		std::array<double,9>{0, 0, 0, 2, 0, 0, 6, 0, 0}
 	};
 
 	std::array<std::array<double, 9>, 9> output_board = board;
